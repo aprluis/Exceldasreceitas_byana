@@ -1,7 +1,7 @@
 let receitas = {};
 
 const ID_FOLHA = "1wIUdHQPey7cv5cAEHotRBNIFTy3dN5Zcu2GUJaI8W9s";
-const GID_FOLHA = "0";
+const GID_FOLHA = "1767423248";
 
 async function carregarReceitas() {
   const url =
@@ -15,9 +15,8 @@ async function carregarReceitas() {
 
   const texto = await resposta.text();
   const dados = JSON.parse(texto.substring(47, texto.length - 2));
-  const linhas = dados.table.rows;
 
-  linhas.forEach(linha => {
+  dados.table.rows.forEach(linha => {
     const valores = linha.c;
 
     if (!valores || !valores[0]) return;
@@ -48,8 +47,7 @@ function procurar() {
           <td>${item[0]}</td>
           <td>${item[1]}</td>
           <td>${item[2]}</td>
-        </tr>
-      `;
+        </tr>`;
     });
   } else {
     tabela.innerHTML =
@@ -59,7 +57,6 @@ function procurar() {
 
 carregarReceitas().catch(erro => {
   console.error(erro);
-
   document.querySelector("#resultado tbody").innerHTML =
     "<tr><td colspan='3'>Erro ao carregar as receitas.</td></tr>";
 });
