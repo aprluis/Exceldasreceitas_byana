@@ -1,11 +1,15 @@
 let receitas = {};
+let nomesIngredientes = {};
 
 const ID_FOLHA = "1wIUdHQPey7cv5cAEHotRBNIFTy3dN5Zcu2GUJaI8W9s";
-const GID_FOLHA = "1767423248";
 
-async function carregarReceitas() {
+const GID_INGREDIENTES_POR_RECEITA = "1767423248";
+const GID_INGREDIENTES = "1270545888";
+
+async function lerFolha(gid) {
   const url =
-    `https://docs.google.com/spreadsheets/d/${ID_FOLHA}/gviz/tq?tqx=out:json&gid=${GID_FOLHA}`;
+    `https://docs.google.com/spreadsheets/d/${ID_FOLHA}/gviz/tq` +
+    `?tqx=out:json&gid=${gid}`;
 
   const resposta = await fetch(url);
 
@@ -14,23 +18,62 @@ async function carregarReceitas() {
   }
 
   const texto = await resposta.text();
-  const dados = JSON.parse(texto.substring(47, texto.length - 2));
 
-  dados.table.rows.forEach(linha => {
+  return JSON.parse(
+    texto
+      .replace("/*O_o*/", "")
+      .replace("google.visualization.Query.setResponse(", "")
+      .slice(0, -2)
+  );
+}
+
+async function carregarDados() {
+  const [dadosReceitas, dadosIngredientes] = await Promise.all([
+    lerFolha(GID_INGREDIENTES_POR_RECEITA),
+    lerFolha(GID_INGREDIENTES)
+  ]);
+
+  // Folha "Ingredientes":
+  // Coluna A = código (ex.: I002)
+  // Coluna B = nome (ex.: Bacalhau)
+  dadosIngredientes.table.rows.forEach(linha => {
+    const valores = linha.c;
+
+    if (!valores || !valores[0] || !valores[1]) return;
+
+    const codigo = String(valores[0].v).trim();
+    const nome = String(valores[1].v).trim();
+
+    nomesIngredientes[codigo] = nome;
+  });
+
+  // Folha "Ingredientes por receitas":
+  // Coluna A = ID da receita
+  // Coluna B = código do ingrediente
+  // Coluna C = quantidade
+  // Coluna D = unidade
+  dadosReceitas.table.rows.forEach(linha => {
     const valores = linha.c;
 
     if (!valores || !valores[0]) return;
 
-    const id = String(valores[0].v).trim();
-    const ingrediente = valores[1]?.v ?? "";
+    const idReceita = String(valores[0].v).trim();
+    const codigoIngrediente = String(valores[1]?.v ?? "").trim();
     const quantidade = valores[2]?.v ?? "";
     const unidade = valores[3]?.v ?? "";
 
-    if (!receitas[id]) {
-      receitas[id] = [];
+    const nomeIngrediente =
+      nomesIngredientes[codigoIngrediente] ?? codigoIngrediente;
+
+    if (!receitas[idReceita]) {
+      receitas[idReceita] = [];
     }
 
-    receitas[id].push([ingrediente, quantidade, unidade]);
+    receitas[idReceita].push([
+      nomeIngrediente,
+      quantidade,
+      unidade
+    ]);
   });
 }
 
@@ -55,8 +98,9 @@ function procurar() {
   }
 }
 
-carregarReceitas().catch(erro => {
+carregarDados().catch(erro => {
   console.error(erro);
+
   document.querySelector("#resultado tbody").innerHTML =
     "<tr><td colspan='3'>Erro ao carregar as receitas.</td></tr>";
 });
