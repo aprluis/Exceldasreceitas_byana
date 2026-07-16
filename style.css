@@ -1,0 +1,36 @@
+body{
+font-family:Arial;
+max-width:700px;
+margin:auto;
+padding:30px;
+background:#f4f4f4;
+}
+
+h1{
+color:#2e7d32;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+background:white;
+}
+
+th,td{
+border:1px solid #ddd;
+padding:10px;
+}
+
+th{
+background:#2e7d32;
+color:white;
+}
+
+button{
+background:#2e7d32;
+color:white;
+padding:10px 20px;
+border:none;
+cursor:pointer;
+}
