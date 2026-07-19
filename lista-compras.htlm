@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Lista de Compras | Excel das Receitas By Ana</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header>
+
+<h1>🛒 Excel das Receitas By Ana</h1>
+
+<nav>
+
+<a href="index.html">Início</a>
+<a href="receitas.html">Receitas</a>
+<a href="lista-compras.html">Lista de Compras</a>
+
+</nav>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h2>Lista de Compras</h2>
+
+<p>
+Introduza o código da receita.
+</p>
+
+<input
+type="text"
+id="codigo"
+placeholder="Ex.: R001"
+maxlength="10">
+
+<button id="btnPesquisar">
+Gerar Lista
+</button>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>ID Ingrediente</th>
+<th>Ingrediente</th>
+<th>Quantidade</th>
+<th>Unidade</th>
+<th>Secção</th>
+
+</tr>
+
+</thead>
+
+<tbody id="resultado">
+
+<tr>
+
+<td colspan="5">
+
+Introduza um código de receita.
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<footer>
+
+Excel das Receitas By Ana © 2026
+
+</footer>
+
+<script src="script.js"></script>
+
+<script>
+
+document
+.getElementById("codigo")
+.addEventListener("keypress",function(e){
+
+if(e.key==="Enter"){
+
+procurarReceita();
+
+}
+
+});
+
+</script>
+
+</body>
+
+</html>
