@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Receitas | Excel das Receitas By Ana</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header>
+
+<h1>🍽️ Excel das Receitas By Ana</h1>
+
+<nav>
+
+<a href="index.html">Início</a>
+<a href="receitas.html">Receitas</a>
+<a href="lista-compras.html">Lista de Compras</a>
+
+</nav>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h2>Pesquisar Receita</h2>
+
+<input
+type="text"
+id="pesquisaReceita"
+placeholder="Ex.: Bacalhau, Arroz, Frango...">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Código</th>
+<th>Receita</th>
+<th>Tipo</th>
+
+</tr>
+
+</thead>
+
+<tbody id="listaReceitas">
+
+<tr>
+
+<td colspan="3">
+
+A carregar receitas...
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<footer>
+
+Excel das Receitas By Ana © 2026
+
+</footer>
+
+<script>
+
+const SHEET_ID="1wIUdHQPey7cv5cAEHotRBNIFTy3dN5Zcu2GUJaI8W9s";
+
+const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Receitas`;
+
+fetch(url)
+
+.then(r=>r.text())
+
+.then(rep=>{
+
+const json=JSON.parse(rep.substr(47).slice(0,-2));
+
+const linhas=json.table.rows;
+
+const tbody=document.getElementById("listaReceitas");
+
+tbody.innerHTML="";
+
+let dados=[];
+
+linhas.forEach(l=>{
+
+if(!l.c) return;
+
+const codigo=l.c[0]?.v ?? "";
+
+const receita=l.c[1]?.v ?? "";
+
+const tipo=l.c[2]?.v ?? "";
+
+dados.push({
+
+codigo,
+
+receita,
+
+tipo
+
+});
+
+});
+
+function mostrar(texto=""){
+
+tbody.innerHTML="";
+
+const filtro=texto.toLowerCase();
+
+dados
+
+.filter(r=>
+
+r.codigo.toLowerCase().includes(filtro)
+
+||
+
+r.receita.toLowerCase().includes(filtro)
+
+||
+
+r.tipo.toLowerCase().includes(filtro)
+
+)
+
+.forEach(r=>{
+
+tbody.innerHTML+=`
+
+<tr>
+
+<td>${r.codigo}</td>
+
+<td>${r.receita}</td>
+
+<td>${r.tipo}</td>
+
+</tr>
+
+`;
+
+});
+
+if(tbody.innerHTML===""){
+
+tbody.innerHTML=
+
+"<tr><td colspan='3'>Nenhuma receita encontrada.</td></tr>";
+
+}
+
+}
+
+mostrar();
+
+document
+
+.getElementById("pesquisaReceita")
+
+.addEventListener("keyup",e=>{
+
+mostrar(e.target.value);
+
+});
+
+});
+
+</script>
+
+</body>
+
+</html>
